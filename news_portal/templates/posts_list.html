@@ -1,0 +1,35 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'flatpages/default.html' %}
+
+
+{% load custom_filters %}
+{% load custom_tags %}
+
+{% block title %}
+News
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим сам товар, идентификатор которого был передан в url -->
+{% block content %}
+{% if posts_list %}
+
+    <h1> Всего публикаций: {{ posts_list|length }} </h1>
+    <h3>{% current_time '%b %d %Y' %}</h3>
+    <table align="center">
+               <tr>
+                   <td>Заголовок</td>
+                   <td>Дата публикации</td>
+                   <td>Текст</td>
+               </tr>
+        {% for posts in posts_list %}
+               <tr>
+                   <td>{{ posts.title|censor }}</td>
+                   <td>{{ posts.add_time|date:"d M Y" }}</td>
+                   <td>{{ posts.text|truncatechars:20|censor }}</td>
+               </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    <h2>Публикаций нет!</h2>
+{% endif %}
+{% endblock content %}
