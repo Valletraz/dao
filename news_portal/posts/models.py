@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 
 NEWS = 'NW'
 ARTICLE = 'AR'
@@ -12,6 +13,9 @@ CATEGORY_CHOICES = (
 class Author(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     ratingAuthor = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.user.username
 
     def update_rating(self):
         self.ratingAuthor = 0
@@ -26,6 +30,9 @@ class Author(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=64, unique=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Post(models.Model):
@@ -54,6 +61,9 @@ class Post(models.Model):
 
     def length(self):
         return self.pk.count()
+
+    def get_absolute_url(self):
+        return reverse('post_detail', args=[str(self.id)])
 
 
 class PostCategory(models.Model):
