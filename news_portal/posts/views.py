@@ -1,5 +1,6 @@
 import datetime
 
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -20,7 +21,7 @@ class PostsList(ListView):
     # Это имя списка, в котором будут лежать все объекты.
     # Его надо указать, чтобы обратиться к списку объектов в html-шаблоне.
     context_object_name = 'posts_list'
-    paginate_by = 1
+    paginate_by = 10
 
     # Переопределяем функцию получения списка товаров
     def get_queryset(self):
@@ -101,7 +102,9 @@ class PostsDetail(DetailView):
 
 
 # Добавляем новое представление для создания товаров.
-class PostCreate(CreateView):
+class PostCreate(PermissionRequiredMixin, CreateView):
+    permission_required = ('posts.add_post', )
+    raise_exception = True
     # Указываем нашу разработанную форму
     form_class = PostForm
     # модель товаров
@@ -111,14 +114,16 @@ class PostCreate(CreateView):
 
 
 # Добавляем представление для изменения товара.
-class PostUpdate(UpdateView):
+class PostUpdate(PermissionRequiredMixin, UpdateView):
+    permission_required = ('posts.change_post',)
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
 
 
 # Представление удаляющее товар.
-class PostDelete(DeleteView):
+class PostDelete(PermissionRequiredMixin, DeleteView):
+    permission_required = ('posts.delete_post',)
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('posts_list')
