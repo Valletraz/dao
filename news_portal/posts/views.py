@@ -10,7 +10,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 
 from .filters import PostFilter
 from .forms import PostForm
-from .models import Post, Category, Subscription
+from .models import Post, Category, Subscriber
 
 
 class PostsList(ListView):
@@ -141,16 +141,16 @@ def subscriptions(request):
         action = request.POST.get('action')
 
         if action == 'subscribe':
-            Subscription.objects.create(user=request.user, category=category)
+            Subscriber.objects.create(user=request.user, category=category)
         elif action == 'unsubscribe':
-            Subscription.objects.filter(
+            Subscriber.objects.filter(
                 user=request.user,
                 category=category,
             ).delete()
 
     categories_with_subscriptions = Category.objects.annotate(
         user_subscribed=Exists(
-            Subscription.objects.filter(
+            Subscriber.objects.filter(
                 user=request.user,
                 category=OuterRef('pk'),
             )

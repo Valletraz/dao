@@ -165,21 +165,21 @@ ACCOUNT_FORMS = {"signup": "accounts.forms.CustomSignupForm"}
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = "valletraz@yandex.ru"
-EMAIL_HOST_PASSWORD = "suztvgexyplurlfr"
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
-DEFAULT_FROM_EMAIL = "valletraz@yandex.ru"
+DEFAULT_FROM_EMAIL = ""
 
-SERVER_EMAIL = "valletraz@yandex.ru"
+SERVER_EMAIL = ""
 
 MANAGERS = (
-    ('V', 'v@bimlogic.ru'),
+    (),
 )
 
 ADMINS = (
-    ('V', 'v@bimlogic.ru'),
+    (),
 )
 
 
