@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 
     'posts',
     'django_filters',
+    'django_apscheduler',
 ]
 
 SITE_ID = 1
@@ -155,6 +156,32 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 
 ACCOUNT_FORMS = {"signup": "accounts.forms.CustomSignupForm"}
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = "valletraz@yandex.ru"
+EMAIL_HOST_PASSWORD = "suztvgexyplurlfr"
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+
+DEFAULT_FROM_EMAIL = "valletraz@yandex.ru"
+
+SERVER_EMAIL = "valletraz@yandex.ru"
+
+MANAGERS = (
+    ('V', 'v@bimlogic.ru'),
+)
+
+ADMINS = (
+    ('V', 'v@bimlogic.ru'),
+)
+
+
+# Добрый день, коллеги! Спасибо, Владислав, за комментарий. Личные данные не стоит "светить" в GitHub. Для этих целей используются переменные окружения. Суть заключается в создании файла .env, в которой вы прописываете все секретные переменные. При этом добавляете его обязательно в .gitignore, дабы исключить попадание в сеть. Также хорошим тоном является создание  .env_example, в которой вы дублируете переменные (без секретных данных), чтоб желающий запустить ваш проект смог понять, как и что ему правильно добавить в файл. Рекомендую почитать про библиотеку dotenv .
+# Если возникнут дополнительные вопросы, пожалуйста, пишите.
