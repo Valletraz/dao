@@ -1,23 +1,46 @@
+import datetime
 import logging
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 from django.conf import settings
-from django.core.mail import mail_managers
+from django.core.mail import mail_managers, EmailMultiAlternatives
 from django.core.management.base import BaseCommand
+from django.template.loader import render_to_string
+from django.utils import timezone
+from django.utils.html import strip_tags
 from django_apscheduler import util
 from django_apscheduler.jobstores import DjangoJobStore
 from django_apscheduler.models import DjangoJobExecution
 
-from posts.models import Post
+from posts.models import Post, Subscriber
 
 logger = logging.getLogger(__name__)
 
 
 def my_job():
-    posts = Post.objects.order_by('add_time')[:3]
-    text = '\n'.join(['{} - {}'.format(p.name, p.price) for p in posts])
-    mail_managers("Самые последние публикации", text)
+    # определить список статей за последнюю неделю
+    today = timezone.now()
+    last_week = today - datetime.timedelta(days=7)
+    articles_to_send = Post.objects.filter(add_time__gte=last_week).order_by('-add_time')
+    categories = set(articles_to_send.values_list('category__name', flat=True))
+    email_list = []
+    url = settings.SITE_URL
+
+    for cat in categories:
+        subscribers = Subscriber.objects.filter(category__name=cat)
+        email_list += [subs.user.email for subs in subscribers]
+    email_list = set(email_list)
+
+    subject, from_email, to = 'Новые публикации за неделю', 'valletraz@yandex.ru', email_list
+
+    html_content = render_to_string('weekly_update.html', {'articles_to_send': articles_to_send, 'url': url})  # render with dynamic value
+    text_content = strip_tags(html_content)  # Strip the html tag. So people can see the pure text at least.
+
+    # create the email, and attach the HTML version as well.
+    msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 
 
 @util.close_old_connections
@@ -44,7 +67,7 @@ class Command(BaseCommand):
         scheduler.add_job(
             delete_old_job_executions,
             trigger=CronTrigger(
-                day_of_week="mon", hour="00", minute="00"
+                day_of_week="fri", hour="18", minute="00"
             ),
             id="delete_old_job_executions",
             max_instances=1,

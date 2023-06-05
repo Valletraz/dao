@@ -39,15 +39,7 @@ def post_created_email(instance, **kwargs):
 
     for cat in categories:
         subscribers = Subscriber.objects.filter(category=cat)
-        print(subscribers)
         email_list += [subs.user.email for subs in subscribers]
-
-    # send_notifications(instance, instance.pk, instance.title, email_list)
-
-    # emails = User.objects.filter(
-    #     subscriber__category=instance.category.name
-    # ).values_list('email', flat=True)
-    print(email_list)
 
     subject = f'Новая публикация в категории {instance.category.name}'
 
