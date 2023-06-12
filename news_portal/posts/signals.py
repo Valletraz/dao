@@ -7,6 +7,7 @@ from django.template.defaultfilters import truncatewords
 from django.template.loader import render_to_string
 
 from .models import Post, PostCategory, Subscriber
+from .tasks import new_post_notify
 
 
 # def send_notifications(instance, pk, title, email_list):
@@ -34,30 +35,33 @@ from .models import Post, PostCategory, Subscriber
 
 @receiver(m2m_changed, sender=PostCategory)
 def post_created_email(instance, **kwargs):
-    categories = instance.category.all()
-    email_list = []
+    if kwargs['action'] == 'post_add':
+        new_post_notify.delay(instance.id)
 
-    for cat in categories:
-        subscribers = Subscriber.objects.filter(category=cat)
-        email_list += [subs.user.email for subs in subscribers]
-
-    subject = f'Новая публикация в категории {instance.category.name}'
-
-    text_content = (
-        f'Публикация: {instance.title}\n'
-        f'Текст: {instance.text}\n\n'
-        f'Ссылка на публикацию: http://127.0.0.1:8000{instance.get_absolute_url()}'
-    )
-    html_content = (
-        f'Публикация: {instance.title}<br>'
-        f'Текст: {instance.text}<br><br>'
-        f'<a href="http://127.0.0.1:8000{instance.get_absolute_url()}">'
-        f'Ссылка на публикацию</a>'
-    )
-    for email in email_list:
-        msg = EmailMultiAlternatives(subject, text_content, None, [email])
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
+    # categories = instance.category.all()
+    # email_list = []
+    #
+    # for cat in categories:
+    #     subscribers = Subscriber.objects.filter(category=cat)
+    #     email_list += [subs.user.email for subs in subscribers]
+    #
+    # subject = f'Новая публикация в категории {instance.category.name}'
+    #
+    # text_content = (
+    #     f'Публикация: {instance.title}\n'
+    #     f'Текст: {instance.text}\n\n'
+    #     f'Ссылка на публикацию: http://127.0.0.1:8000{instance.get_absolute_url()}'
+    # )
+    # html_content = (
+    #     f'Публикация: {instance.title}<br>'
+    #     f'Текст: {instance.text}<br><br>'
+    #     f'<a href="http://127.0.0.1:8000{instance.get_absolute_url()}">'
+    #     f'Ссылка на публикацию</a>'
+    # )
+    # for email in email_list:
+    #     msg = EmailMultiAlternatives(subject, text_content, None, [email])
+    #     msg.attach_alternative(html_content, "text/html")
+    #     msg.send()
 
 # @receiver(post_save, sender=Post)
 # def product_created(instance, **kwargs):

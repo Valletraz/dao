@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
+from config import REDIS_DB, YANDEX_EMAIL, YANDEX_PW, DJANGO_KEY
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-e8e**!pq&64(jl=j^^mw$(n^kipqex=x*y%z60pc@x=c21-kca'
+SECRET_KEY = DJANGO_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -166,14 +168,14 @@ ACCOUNT_FORMS = {"signup": "accounts.forms.CustomSignupForm"}
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = ""
-EMAIL_HOST_PASSWORD = ""
+EMAIL_HOST_USER = YANDEX_EMAIL
+EMAIL_HOST_PASSWORD = YANDEX_PW
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
-DEFAULT_FROM_EMAIL = ""
+DEFAULT_FROM_EMAIL = YANDEX_EMAIL
 
-SERVER_EMAIL = ""
+SERVER_EMAIL = YANDEX_EMAIL
 
 MANAGERS = (
     (),
@@ -182,6 +184,12 @@ MANAGERS = (
 ADMINS = (
     (),
 )
+
+CELERY_BROKER_URL = REDIS_DB
+CELERY_RESULT_BACKEND = REDIS_DB
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 
 # Добрый день, коллеги! Спасибо, Владислав, за комментарий. Личные данные не стоит "светить" в GitHub. Для этих целей используются переменные окружения.
