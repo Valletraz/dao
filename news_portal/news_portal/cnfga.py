@@ -1,4 +1,0 @@
-REDIS_DB = ''
-YANDEX_EMAIL=""
-YANDEX_PW = ""
-DJANGO_KEY = ''
