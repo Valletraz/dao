@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 import os
 from pathlib import Path
 
-from config import REDIS_DB, YANDEX_EMAIL, YANDEX_PW, DJANGO_KEY
+from dao.config import REDIS_DB, YANDEX_EMAIL, YANDEX_PW, DJANGO_KEY
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
